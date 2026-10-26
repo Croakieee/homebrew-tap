@@ -1,0 +1,48 @@
+name: Update cask
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the latest GlassOTP release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=$(gh release view --repo Croakieee/GlassOTP --json tagName --jq .tagName)
+          latest=${tag#v.}
+          latest=${latest#v}
+          current=$(sed -n 's/^  version "\(.*\)"/\1/p' Casks/glassotp.rb)
+          echo "current=$current latest=$latest"
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+          if [ "$latest" != "$current" ]; then echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Update the cask
+        if: steps.release.outputs.changed == 'true'
+        run: ./update-cask.sh "${{ steps.release.outputs.latest }}"
+
+      - name: Audit the cask
+        if: steps.release.outputs.changed == 'true'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_FROM_API: "1"
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "glassotp ${{ steps.release.outputs.latest }}"
+          brew tap croakieee/tap "$GITHUB_WORKSPACE"
+          brew audit --cask --strict croakieee/tap/glassotp
+
+      - name: Push
+        if: steps.release.outputs.changed == 'true'
+        run: git push
