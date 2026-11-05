@@ -8,6 +8,12 @@ Homebrew tap for [GlassOTP](https://github.com/Croakieee/GlassOTP).
 brew install --cask croakieee/tap/glassotp
 ```
 
+If Homebrew refuses to load the cask from an untrusted tap:
+
+```sh
+brew trust --cask croakieee/tap/glassotp
+```
+
 ## Update
 
 ```sh

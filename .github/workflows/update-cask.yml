@@ -2,7 +2,7 @@ name: Update cask
 
 on:
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -12,7 +12,7 @@ jobs:
   update:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Check the latest GlassOTP release
         id: release
@@ -41,6 +41,7 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -am "glassotp ${{ steps.release.outputs.latest }}"
           brew tap croakieee/tap "$GITHUB_WORKSPACE"
+          brew trust --tap croakieee/tap
           brew audit --cask --strict croakieee/tap/glassotp
 
       - name: Push
