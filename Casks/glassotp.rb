@@ -17,15 +17,15 @@ cask "glassotp" do
 
   app "GlassOTP/GlassOTP.app"
 
-  postflight_steps do
-    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{appdir}}/GlassOTP.app"]
-  end
-
   uninstall launchctl: "com.glassotp.loginitem",
-            quit:      "com.yourname.GlassOTP"
+            quit:      [
+              "com.yourname.GlassOTP",
+              "io.github.croakieee.GlassOTP",
+            ]
 
   zap trash: [
     "~/Library/Containers/com.yourname.GlassOTP",
+    "~/Library/Containers/io.github.croakieee.GlassOTP",
     "~/Library/LaunchAgents/com.glassotp.loginitem.plist",
   ]
 end
