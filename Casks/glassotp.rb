@@ -1,6 +1,6 @@
 cask "glassotp" do
-  version "2.0.0"
-  sha256 "190ff603589077aaa4610ef656f44147d2343a9bff3734bb1ae5e3000f61d3cc"
+  version "2.0.1"
+  sha256 "da76fb1d0c81eca7a51c55cdd0c413b54b010d78c216396b2d55994ab10ca91a"
 
   url "https://github.com/Croakieee/GlassOTP/releases/download/v.#{version}/GlassOTP.zip"
   name "GlassOTP"
@@ -15,7 +15,7 @@ cask "glassotp" do
 
   depends_on macos: :big_sur
 
-  app "GlassOTP/GlassOTP.app"
+  app "GlassOTP.app"
 
   uninstall launchctl: "com.glassotp.loginitem",
             quit:      [
