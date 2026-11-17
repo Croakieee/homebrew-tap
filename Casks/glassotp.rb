@@ -17,15 +17,15 @@ cask "glassotp" do
 
   app "GlassOTP.app"
 
-  uninstall launchctl: "com.glassotp.loginitem",
-            quit:      [
-              "com.yourname.GlassOTP",
-              "io.github.croakieee.GlassOTP",
-            ]
-
-  zap trash: [
-    "~/Library/Containers/com.yourname.GlassOTP",
-    "~/Library/Containers/io.github.croakieee.GlassOTP",
-    "~/Library/LaunchAgents/com.glassotp.loginitem.plist",
+  uninstall quit: [
+    "com.yourname.GlassOTP",
+    "io.github.croakieee.GlassOTP",
   ]
+
+  zap launchctl: "com.glassotp.loginitem",
+      trash:     [
+        "~/Library/Containers/com.yourname.GlassOTP",
+        "~/Library/Containers/io.github.croakieee.GlassOTP",
+        "~/Library/LaunchAgents/com.glassotp.loginitem.plist",
+      ]
 end
