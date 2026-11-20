@@ -9,8 +9,11 @@ permissions:
   contents: write
 
 jobs:
-  update:
-    runs-on: macos-latest
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      latest: ${{ steps.release.outputs.latest }}
+      changed: ${{ steps.release.outputs.changed }}
     steps:
       - uses: actions/checkout@v5
 
@@ -27,23 +30,27 @@ jobs:
           echo "latest=$latest" >> "$GITHUB_OUTPUT"
           if [ "$latest" != "$current" ]; then echo "changed=true" >> "$GITHUB_OUTPUT"; fi
 
+  update:
+    needs: check
+    if: needs.check.outputs.changed == 'true'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+
       - name: Update the cask
-        if: steps.release.outputs.changed == 'true'
-        run: ./update-cask.sh "${{ steps.release.outputs.latest }}"
+        run: ./update-cask.sh "${{ needs.check.outputs.latest }}"
 
       - name: Audit the cask
-        if: steps.release.outputs.changed == 'true'
         env:
           HOMEBREW_NO_AUTO_UPDATE: "1"
           HOMEBREW_NO_INSTALL_FROM_API: "1"
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -am "glassotp ${{ steps.release.outputs.latest }}"
+          git commit -am "glassotp ${{ needs.check.outputs.latest }}"
           brew tap croakieee/tap "$GITHUB_WORKSPACE"
           brew trust --tap croakieee/tap
           brew audit --cask --strict croakieee/tap/glassotp
 
       - name: Push
-        if: steps.release.outputs.changed == 'true'
         run: git push
