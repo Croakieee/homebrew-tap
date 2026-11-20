@@ -1,6 +1,6 @@
 cask "glassotp" do
-  version "2.0.1"
-  sha256 "da76fb1d0c81eca7a51c55cdd0c413b54b010d78c216396b2d55994ab10ca91a"
+  version "2.0.2"
+  sha256 "29549ce8469593f1e9a18b7c072f25ddc70d77cb6adf58f1f8090e188bb55339"
 
   url "https://github.com/Croakieee/GlassOTP/releases/download/v.#{version}/GlassOTP.zip"
   name "GlassOTP"
